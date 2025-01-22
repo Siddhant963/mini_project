@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://cdn.tailwindcss.com"></script>
+     <title>Document</title>
+</head>
+<body>
+     <div class="main bg-zinc-900 w-full h-screen py-3 px-2 text-white">
+          <h1 class="text-3xl "><span>hello</span> <%= user.name %> 👋 </h1>
+          <h4 class="text-lg">you can write a post </h4>
+          <form action="/post" method="post">
+               <textarea name="contant" class="w-1/3 px-2 py-3  m-3 bg-zinc-400 block border-zinc-500 rounded-md" placeholder="write your post..."></textarea>
+               <input class="px-3 m-3 py-2 bg-blue-400 rounded-md border-white-300" type="submit" value=" create post">
+          </form>
+
+          <h2 class="mt-24 text-2xl">your posts</h2>
+          <!-- here we will display all our posts -->
+           <div class="post mt-12 px-4 py-4 bg-zinc-600 w-1/3v rounded-md border-white-500 m-3  "> 
+               <h2 class="text-xl text-blue-600 "><%=user.email%></h2>
+               <p>post</p>
+           </div>
+     </div>
+</body>
+</html>

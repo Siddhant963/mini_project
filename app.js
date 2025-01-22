@@ -8,6 +8,13 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const ejs = require("ejs");
 const usermodel = require("./model/usermodel");
+const postmodel = require("./model/postmodel");
+const multer = require("multer");
+const path = require("path");
+const crypto = require("crypto");
+
+
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -19,6 +26,33 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
+
+const storage = multer.diskStorage({
+     destination: function (req, file, cb) {
+       cb(null, './public/images/uploads')
+     },
+     filename: function (req, file, cb) {
+       
+crypto.randomBytes(12 , function(err , bytes){ 
+     const fn = bytes.toString("hex") + path.extname(file.originalname);
+     cb(null, fn)
+  })
+       
+     }
+   })
+   
+   const upload = multer({ storage: storage })
+
+
+   app.get("/upload" , (req ,res)=>{ 
+     res.render("post.ejs");
+})
+
+app.post("/upload" , upload.single('image'),(req,res)=>{ 
+    console.log(req.file);
+    res.send("image uploaded successfully");
+    
+})
 
 app.get("/", (req, res) => {
   // res.send('Hello World!');
@@ -89,9 +123,26 @@ function isloggedin(req ,res ,next){
      }
 }
 
-app.get('/profile' ,isloggedin,  (req,res)=>{ 
-     res.send(req.user);
+app.get('/profile' ,isloggedin, async (req,res)=>{ 
+    
+
+     let user = await usermodel.findOne({email : req.user.email});
+     console.log(user);
+     res.render('profile.ejs' , {user});
 })
+
+app.post("/post" ,isloggedin , async (req,res)=>{ 
+     const {contant} = req.body;
+     if(!contant) return res.status(500).json({error: "All fields are required."});
+
+     let user = await usermodel.findOne({email : req.user.email});
+     let post = await postmodel.create({ 
+          contant,
+          
+     })    
+})
+
+
 
 app.get('/logout' ,(req,res)=>{ 
      res.clearCookie('token');
